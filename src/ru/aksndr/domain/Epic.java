@@ -2,6 +2,7 @@ package ru.aksndr.domain;
 
 import ru.aksndr.enums.TaskStatus;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collection;
 
@@ -32,7 +33,7 @@ public class Epic extends Task{
                 ", title = '" + getTitle() + '\'' +
                 ", description = '" + getDescription() + '\'' +
                 ", status = " + getStatus() +
-                ", subtasks = " + getSubtasks() +
+                ", subtasks count = " + getSubtasks().size() +
                 '}';
     }
 
