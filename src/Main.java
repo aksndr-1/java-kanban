@@ -20,9 +20,9 @@ public class Main {
         SubTask subTask3 = taskManager.createSubTask(new SubTask("Подзадача 1 Эпика 2", "Описание подзадачи 1 Эпика 2", epic2.getId()));
 
         //Распечатайте списки эпиков, задач и подзадач через System.out.println(..).
-//        System.out.println(taskManager.getAllEpics());
-//        System.out.println(taskManager.getAllTasks());
-//        System.out.println(taskManager.getAllSubTasks());
+        System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getAllTasks());
+        System.out.println(taskManager.getAllSubTasks());
 
         //Измените статусы созданных объектов, распечатайте их. Проверьте, что статус задачи и подзадачи сохранился, а статус эпика рассчитался по статусам подзадач.
         taskManager.updateTask(new Task(task1.getId(), task1.getTitle(), task1.getDescription(), TaskStatus.IN_PROGRESS));
