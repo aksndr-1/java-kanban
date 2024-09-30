@@ -2,12 +2,15 @@ package ru.aksndr.domain;
 
 import ru.aksndr.enums.TaskStatus;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collection;
 
 public class Epic extends Task{
 
+    // я не согласен, что здесь лучше будет использовать List, потому,
+    // что в методе deleteSubtask мне придётся ходить циклом, чтобы удалить подзадачу по идентификатору
+    // тогда как использование Map будет быстрее, т.к. сложность будет O(1)
+    // а в случае List будет O(n)
     private final HashMap<Integer, SubTask> subtasks = new HashMap<>();
 
     public Epic(int id, String title, String description, TaskStatus taskStatus) {
