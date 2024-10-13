@@ -2,6 +2,8 @@ package ru.aksndr.domain;
 
 import ru.aksndr.enums.TaskStatus;
 
+import java.util.Objects;
+
 public class Task {
 
     protected int id;
@@ -50,7 +52,7 @@ public class Task {
         return status;
     }
 
-    protected void setStatus(TaskStatus status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 
@@ -64,7 +66,7 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return id;
+        return Objects.hashCode(getId());
     }
 
     @Override

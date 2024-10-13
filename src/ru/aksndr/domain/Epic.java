@@ -1,32 +1,36 @@
 package ru.aksndr.domain;
 
 import ru.aksndr.enums.TaskStatus;
-
-import java.util.HashMap;
-import java.util.Collection;
+import java.util.ArrayList;
 
 public class Epic extends Task{
 
-    // я не согласен, что здесь лучше будет использовать List, потому,
-    // что в методе deleteSubtask мне придётся ходить циклом, чтобы удалить подзадачу по идентификатору
-    // тогда как использование Map будет быстрее, т.к. сложность будет O(1)
-    // а в случае List будет O(n)
-    private final HashMap<Integer, SubTask> subtasks = new HashMap<>();
-
-    public Epic(int id, String title, String description, TaskStatus taskStatus) {
-        super(id, title, description, taskStatus);
-    }
+    private final ArrayList<SubTask> subTasks = new ArrayList<>();
 
     public Epic(String title, String description) {
         super(title, description);
     }
 
-    public Collection<SubTask> getSubtasks() {
-        return subtasks.values();
+    public ArrayList<SubTask> getSubTasks() {
+        return subTasks;
     }
 
     public void addSubtask(SubTask subtask) {
-        subtasks.put(subtask.getId(), subtask);
+        if (subTasks.contains(subtask)) {
+            int index = subTasks.indexOf(subtask);
+            subTasks.remove(index);
+            subTasks.add(index, subtask);
+        } else {
+            subTasks.add(subtask);
+        }
+    }
+
+    public void deleteSubtask(SubTask subTask) {
+        subTasks.remove(subTask);
+    }
+
+    public void deleteAllSubtasks() {
+        subTasks.clear();
     }
 
     @Override
@@ -36,18 +40,21 @@ public class Epic extends Task{
                 ", title = '" + getTitle() + '\'' +
                 ", description = '" + getDescription() + '\'' +
                 ", status = " + getStatus() +
-                ", subtasks count = " + getSubtasks().size() +
+                ", subtasks count = " + subTasks.size() +
                 '}';
     }
 
+    /**
+     * Обновление статуса Эпика по всем задачам в нем
+     */
     public void updateStatus() {
-        if (subtasks.isEmpty()) {
+        if (subTasks.isEmpty()) {
             setStatus(TaskStatus.NEW);
             return;
         }
         boolean allDone = true, allNew = true;
 
-        for (SubTask subtask : subtasks.values()) {
+        for (SubTask subtask : subTasks) {
             if (subtask.getStatus() != TaskStatus.NEW) {
                 allNew = false;
             }
@@ -65,15 +72,4 @@ public class Epic extends Task{
         }
     }
 
-    public void deleteSubtask(int id) {
-        if (subtasks.containsKey(id)) {
-            subtasks.remove(id);
-            updateStatus();
-        }
-    }
-
-    public void deleteAllSubtasks() {
-        subtasks.clear();
-        updateStatus();
-    }
 }
