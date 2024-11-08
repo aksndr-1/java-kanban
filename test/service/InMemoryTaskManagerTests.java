@@ -1,6 +1,7 @@
 package service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.aksndr.domain.Epic;
 import ru.aksndr.domain.SubTask;
@@ -24,7 +25,7 @@ public class InMemoryTaskManagerTests {
         taskManager = Managers.getDefaultTaskManager();
     }
 
-    // проверить, что свойства добавленной и полученной из менеджера задачи совпадают
+    @DisplayName("проверить, что свойства добавленной и полученной из менеджера задачи совпадают")
     @Test
     void taskFeaturesEqualityTest() {
         Task task1 = taskManager.createTask(new Task("Задача 1", "Описание 1"));
@@ -34,7 +35,7 @@ public class InMemoryTaskManagerTests {
         assertEquals(task1.getStatus(), task2.getStatus(), "Статус задачи не соответствует полученной");
     }
 
-    // проверить, что добавление задачи приводит к заполнению списка задач
+    @DisplayName("проверить, что добавление задачи приводит к заполнению списка задач")
     @Test
     void manageTaskTests() {
         Task task1 = taskManager.createTask(new Task("Задача 1", "Описание 1"));
@@ -43,7 +44,7 @@ public class InMemoryTaskManagerTests {
         assertNotNull(taskManager.getTask(task1.getId()), "Не удалось получить задачу по ID после добавления");
     }
 
-    // проверка методов управления задачами
+    @DisplayName("проверка методов управления задачами")
     @Test
     void manageSubTaskTests() {
         Epic epic1 = taskManager.createEpic(new Epic("Эпик 1", "Описание эпика 1"));
@@ -64,7 +65,7 @@ public class InMemoryTaskManagerTests {
         assertEquals(TaskStatus.DONE, taskManager.getEpic(subTask1.getEpicId()).getStatus(), "Статус эпика не соответствует измененному");
     }
 
-    // тесты управления свойствами эпиков
+    @DisplayName("тесты управления свойствами эпиков")
     @Test
     void manageEpicsTests() {
         Epic epic1 = taskManager.createEpic(new Epic("Эпик 1", "Описание эпика 1"));
@@ -86,6 +87,16 @@ public class InMemoryTaskManagerTests {
 
         taskManager.deleteSubTask(subTask1.getId());
         assertEquals(1, epic1.getSubTasks().size(), "Удаление подзадачи должно удалить её из эпика");
+    }
+
+    @DisplayName("проверяем, что при удалении подзадачи она удаляется из эпика")
+    @Test
+    void deleteSubTaskTest() {
+        Epic epic1 = taskManager.createEpic(new Epic("Эпик 1", "Описание эпика 1"));
+        SubTask subTask1 = taskManager.createSubTask(new SubTask("Подзадача 1 Эпика 1", "Описание подзадачи 1 Эпика 1", epic1.getId()));
+
+        taskManager.deleteSubTask(subTask1.getId());
+        assertEquals(0, epic1.getSubTasks().size(), "Удаление подзадачи должно удалить её из эпика");
     }
 
 }
