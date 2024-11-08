@@ -10,12 +10,17 @@ public interface IHistoryManager {
     /**
     * Добавить задачу в историю просмотров
     */
-    void addHistory(Task task);
+    void add(Task task);
 
     /**
      * Добавить набор задач в историю просмотров
      */
-    void addHistory(Collection<? extends Task> values);
+    void add(Collection<? extends Task> values);
+
+    /**
+     * Удалить задачу из истории просмотров
+     */
+    void remove(int taskId);
 
     /**
      * Получить историю просмотра задачи
@@ -23,9 +28,4 @@ public interface IHistoryManager {
      */
     List<Task> getHistory();
 
-    /**
-     * Получить максимальное количество просмотров
-     * @return Максимальное количество просмотров
-     */
-    short getLimit();
 }
