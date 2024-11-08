@@ -17,8 +17,6 @@ public class InMemoryTaskManager implements ITaskManager {
     private final IHistoryManager historyManager = Managers.getDefaultHistoryManager();
     private int counter = 0;
 
-    public InMemoryTaskManager() {}
-
     @Override
     public IHistoryManager getHistoryManager() {
         return historyManager;
@@ -119,7 +117,7 @@ public class InMemoryTaskManager implements ITaskManager {
     }
 
     @Override
-    public void addSubTaskToEpic(Epic epic, Task subTask){
+    public void addSubTaskToEpic(Epic epic, Task subTask) {
         if (!(subTask instanceof SubTask)) {
             throw new IllegalArgumentException("SubTask must be instance of SubTask");
         }
