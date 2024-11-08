@@ -3,7 +3,7 @@ package ru.aksndr.domain;
 import ru.aksndr.enums.TaskStatus;
 import java.util.ArrayList;
 
-public class Epic extends Task{
+public class Epic extends Task {
 
     private final ArrayList<SubTask> subTasks = new ArrayList<>();
 
