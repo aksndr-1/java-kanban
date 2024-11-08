@@ -24,7 +24,7 @@ public class InMemoryHistoryManager implements IHistoryManager {
     }
 
     @Override
-    public void remove(int taskId){
+    public void remove(int taskId) {
         removeNode(history.remove(taskId));
     }
 
