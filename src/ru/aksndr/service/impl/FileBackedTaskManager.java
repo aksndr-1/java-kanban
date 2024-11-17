@@ -55,15 +55,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
 
     // Операции с подзадачами
     @Override
-    public SubTask createSubTask(SubTask SubTask) {
-        super.createSubTask(SubTask);
+    public SubTask createSubTask(SubTask subTask) {
+        super.createSubTask(subTask);
         save();
-        return SubTask;
+        return subTask;
     }
 
     @Override
-    public void updateSubTask(SubTask SubTask) {
-        super.updateSubTask(SubTask);
+    public void updateSubTask(SubTask subTask) {
+        super.updateSubTask(subTask);
         save();
     }
 
@@ -74,8 +74,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
     }
 
     @Override
-    public void addSubTaskToEpic(Epic epic, Task SubTask) {
-        super.addSubTaskToEpic(epic, SubTask);
+    public void addSubTaskToEpic(Epic epic, Task subTask) {
+        super.addSubTaskToEpic(epic, subTask);
         save();
     }
 
