@@ -1,0 +1,4 @@
+id,WorkItemType,name,status,description,epic,
+Task {id=1, title='Задача 1', description='Описание 1', status=NEW}
+Epic {id = 2, title = 'Эпик 1', description = 'Описание эпика 1', status = NEW, subtasks count = 1}
+SubTask {id = 3, title = 'Подзадача 1 Эпика 1', description = 'Описание подзадачи 1 Эпика 1', status = NEW, parentId = 2}
