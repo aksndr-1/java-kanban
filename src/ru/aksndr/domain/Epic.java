@@ -1,14 +1,26 @@
 package ru.aksndr.domain;
 
 import ru.aksndr.enums.TaskStatus;
+import ru.aksndr.enums.WorkItemType;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Epic extends Task {
+
+    @Override
+    public WorkItemType getItemType() {
+        return WorkItemType.EPIC;
+    }
 
     private final ArrayList<SubTask> subTasks = new ArrayList<>();
 
     public Epic(String title, String description) {
         super(title, description);
+    }
+
+    public Epic(int id, String title, String description, TaskStatus taskStatus) {
+        super(id, title, description, taskStatus);
     }
 
     public ArrayList<SubTask> getSubTasks() {
@@ -70,6 +82,20 @@ public class Epic extends Task {
         } else {
             setStatus(TaskStatus.IN_PROGRESS);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(subTasks, epic.subTasks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subTasks);
     }
 
 }

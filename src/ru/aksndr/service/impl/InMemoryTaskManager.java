@@ -11,11 +11,11 @@ import java.util.Map;
 
 public class InMemoryTaskManager implements ITaskManager {
 
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, SubTask> subTasks = new HashMap<>();
-    private final IHistoryManager historyManager = Managers.getDefaultHistoryManager();
-    private int counter = 0;
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected final IHistoryManager historyManager = Managers.getDefaultHistoryManager();
+    protected int counter = 0;
 
     @Override
     public IHistoryManager getHistoryManager() {
@@ -215,7 +215,7 @@ public class InMemoryTaskManager implements ITaskManager {
         return historyManager.getHistory();
     }
 
-    private int getNextId() {
+    protected int getNextId() {
         return ++counter;
     }
 

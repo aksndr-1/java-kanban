@@ -1,6 +1,7 @@
 package ru.aksndr.domain;
 
 import ru.aksndr.enums.TaskStatus;
+import ru.aksndr.enums.WorkItemType;
 
 import java.util.Objects;
 
@@ -10,6 +11,10 @@ public class Task {
     protected String title;
     protected String description;
     protected TaskStatus status;
+
+    public WorkItemType getItemType() {
+        return WorkItemType.TASK;
+    }
 
     public Task(int id, String title, String description, TaskStatus status) {
         this.id = id;
@@ -57,11 +62,11 @@ public class Task {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Task other)) return false;
-
-        return this.id == other.id;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id;
     }
 
     @Override
@@ -78,4 +83,5 @@ public class Task {
                 ", status=" + status +
                 '}';
     }
+
 }

@@ -3,7 +3,12 @@ package ru.aksndr.service.impl;
 import ru.aksndr.service.IHistoryManager;
 import ru.aksndr.domain.Task;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Objects;
 
 public class InMemoryHistoryManager implements IHistoryManager {
 
