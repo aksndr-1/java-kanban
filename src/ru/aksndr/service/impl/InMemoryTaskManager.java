@@ -20,7 +20,7 @@ public class InMemoryTaskManager implements ITaskManager {
     protected int counter = 0;
 
     public InMemoryTaskManager() {
-        prioritizedTasks = new TreeSet<>(TasksStartTimeComparator);
+        prioritizedTasks = new TreeSet<>(tasksStartTimeComparator);
     }
 
     @Override
@@ -193,7 +193,7 @@ public class InMemoryTaskManager implements ITaskManager {
         if (!epics.containsKey(id)) return;
 
         Epic epic = epics.get(id);
-        for (SubTask subtask : epic.getSubTasks()){
+        for (SubTask subtask : epic.getSubTasks()) {
             historyManager.remove(subtask.getId());
             subTasks.remove(subtask.getId());
             epic.deleteSubtask(subtask);
@@ -256,11 +256,11 @@ public class InMemoryTaskManager implements ITaskManager {
         prioritizedTasks.add(task);
     }
 
-    Comparator<Task> TasksStartTimeComparator = (task1, task2) -> {
+    Comparator<Task> tasksStartTimeComparator = (task1, task2) -> {
         int result = 0;
         if (task1 == null) {
             result = 1;
-        } else if(task1.getStartTime() == null && task2.getStartTime() == null){
+        } else if (task1.getStartTime() == null && task2.getStartTime() == null) {
             result = task2.getId() - task1.getId();
         } else if (task1.getStartTime() != null && task2.getStartTime() == null) {
             result = -1;
