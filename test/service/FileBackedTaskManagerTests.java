@@ -1,36 +1,23 @@
 package service;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import ru.aksndr.domain.Epic;
-import ru.aksndr.domain.SubTask;
-import ru.aksndr.domain.Task;
-import ru.aksndr.service.ITaskManager;
+import org.junit.jupiter.api.*;
 import ru.aksndr.service.impl.FileBackedTaskManager;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FileBackedTaskManagerTests {
+public class FileBackedTaskManagerTests extends TaskManagerTest{
 
-    private ITaskManager taskManager;
-    private File file;
+    static File file;
 
-    @BeforeEach
-    public void beforeEach() throws IOException {
+    @BeforeAll
+    public static void initManger() throws IOException {
         file = File.createTempFile("storage", ".csv");
         taskManager = FileBackedTaskManager.load(file);
-        taskManager.createTask(new Task("Задача 1", "Описание 1", LocalDateTime.of(2024, 12, 1, 10, 20), Duration.ofMinutes(15)));
-        Epic epic1 = taskManager.createEpic(new Epic("Эпик 1", "Описание эпика 1"));
-        taskManager.createSubTask(new SubTask("Подзадача 1 Эпика 1", "Описание подзадачи 1 Эпика 1", epic1.getId(), LocalDateTime.of(2024, 12, 2, 10, 20), Duration.ofMinutes(15)));
     }
 
     @AfterEach
@@ -60,9 +47,9 @@ public class FileBackedTaskManagerTests {
                 linesList.add(line + "\n");
             }
         assertEquals(linesList.get(0), "id,type,name,status,description,epic,startTime,duration\n");
-        assertEquals(linesList.get(1), "2,TASK,Задача 1,NEW,Описание 1,,2024-12-01T10:20,PT15M\n");
-        assertEquals(linesList.get(2), "3,EPIC,Эпик 1,NEW,Описание эпика 1,,2024-12-02T10:20,PT15M\n");
-        assertEquals(linesList.get(3), "4,SUBTASK,Подзадача 1 Эпика 1,NEW,Описание подзадачи 1 Эпика 1,3,2024-12-02T10:20,PT15M\n");
+        assertEquals(linesList.get(1), "6,TASK,Задача 1,NEW,Описание 1,,2024-12-01T10:20,PT15M\n");
+        assertEquals(linesList.get(2), "7,EPIC,Эпик 1,NEW,Описание эпика 1,,2024-12-02T10:20,PT30M\n");
+        assertEquals(linesList.get(3), "8,SUBTASK,Подзадача 1 Эпика 1,NEW,Описание подзадачи 1 Эпика 1,7,2024-12-02T10:20,PT15M\n");
     }
 
     @DisplayName("Очистка задач и проверка пустоты хранилища")

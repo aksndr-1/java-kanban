@@ -5,7 +5,6 @@ import ru.aksndr.enums.WorkItemType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -131,7 +130,7 @@ public class Task {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
-                ", startTime  = " + startTime.format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy")) + '\'' +
+                ", startTime  = " + startTime + '\'' +
                 ", duration = " + duration +
                 '}';
     }

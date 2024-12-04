@@ -190,14 +190,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
     }
 
     private static Task stringToWorkItem(String value) throws CastWorkItemTypeException {
-        String[] split = value.split(",");
+        String[] split = value.split(",", -1);
         int id = Integer.parseInt(split[0]);
         WorkItemType taskType = WorkItemType.valueOf(split[1]);
         String title = split[2];
         TaskStatus status = TaskStatus.valueOf(split[3]);
         String description = split[4];
-        LocalDateTime startTime = !split[6].isBlank() ? LocalDateTime.parse(split[6]) : null;
-        Duration duration = !split[7].isBlank() ? Duration.parse(split[7]) : null;
+        LocalDateTime startTime = split[6].isBlank() ? null : LocalDateTime.parse(split[6]);
+        Duration duration = split[7].isBlank() ? null : Duration.parse(split[7]);
 
         return switch (taskType) {
             case TASK -> new Task(id, title, description, status, startTime, duration);

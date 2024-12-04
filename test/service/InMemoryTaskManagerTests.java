@@ -1,14 +1,11 @@
 package service;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.aksndr.domain.Epic;
 import ru.aksndr.domain.SubTask;
 import ru.aksndr.domain.Task;
 import ru.aksndr.enums.TaskStatus;
-import ru.aksndr.service.ITaskManager;
+import ru.aksndr.service.impl.InMemoryTaskManager;
 import ru.aksndr.util.Managers;
 
 import java.time.Duration;
@@ -19,29 +16,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InMemoryTaskManagerTests {
+public class InMemoryTaskManagerTests extends TaskManagerTest{
 
-    private static ITaskManager taskManager;
-
-    private Task task1;
-    private Epic epic1;
-    private SubTask subTask1;
-    private SubTask subTask2;
-
-    @BeforeEach
-    public void init() {
+    @BeforeAll
+    public static void initManger(){
         taskManager = Managers.getDefaultTaskManager();
-        task1 = taskManager.createTask(new Task("Задача 1", "Описание 1"));
-        epic1 = taskManager.createEpic(new Epic("Эпик 1", "Описание эпика 1"));
-        subTask1 = taskManager.createSubTask(new SubTask("Подзадача 1 Эпика 1", "Описание подзадачи 1 Эпика 1", epic1.getId()));
-        subTask2 = taskManager.createSubTask(new SubTask("Подзадача 2 Эпика 1", "Описание подзадачи 2 Эпика 1", epic1.getId()));
-    }
-
-    @AfterEach
-    public void clean() {
-        taskManager.deleteAllTasks();
-        taskManager.deleteAllSubTasks();
-        taskManager.deleteAllEpics();
     }
 
     @DisplayName("проверить, что свойства добавленной и полученной из менеджера задачи совпадают")
@@ -148,7 +127,7 @@ public class InMemoryTaskManagerTests {
     @DisplayName("Проверка прироритетности задач")
     @Test
     void priorityTaskTest() {
-        assertEquals("Задача 1", taskManager.getPrioritizedTasks().getLast().getTitle());
+        assertEquals("Подзадача 2 Эпика 1", taskManager.getPrioritizedTasks().getLast().getTitle());
     }
 
 }
