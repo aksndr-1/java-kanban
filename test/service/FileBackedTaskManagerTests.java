@@ -12,6 +12,8 @@ import ru.aksndr.service.impl.FileBackedTaskManager;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +28,9 @@ public class FileBackedTaskManagerTests {
     public void beforeEach() throws IOException {
         file = File.createTempFile("storage", ".csv");
         taskManager = FileBackedTaskManager.load(file);
-        Task task1 = taskManager.createTask(new Task("Задача 1", "Описание 1"));
+        taskManager.createTask(new Task("Задача 1", "Описание 1", LocalDateTime.of(2024, 12, 1, 10, 20), Duration.ofMinutes(15)));
         Epic epic1 = taskManager.createEpic(new Epic("Эпик 1", "Описание эпика 1"));
-        SubTask subTask1 = taskManager.createSubTask(new SubTask("Подзадача 1 Эпика 1", "Описание подзадачи 1 Эпика 1", epic1.getId()));
-
+        taskManager.createSubTask(new SubTask("Подзадача 1 Эпика 1", "Описание подзадачи 1 Эпика 1", epic1.getId(), LocalDateTime.of(2024, 12, 2, 10, 20), Duration.ofMinutes(15)));
     }
 
     @AfterEach
@@ -58,10 +59,10 @@ public class FileBackedTaskManagerTests {
                 String line = br.readLine();
                 linesList.add(line + "\n");
             }
-        assertEquals(linesList.get(0), "id,type,name,status,description,epic,\n");
-        assertEquals(linesList.get(1), "2,TASK,Задача 1,NEW,Описание 1,\n");
-        assertEquals(linesList.get(2), "3,EPIC,Эпик 1,NEW,Описание эпика 1,\n");
-        assertEquals(linesList.get(3), "4,SUBTASK,Подзадача 1 Эпика 1,NEW,Описание подзадачи 1 Эпика 1,3\n");
+        assertEquals(linesList.get(0), "id,type,name,status,description,epic,startTime,duration\n");
+        assertEquals(linesList.get(1), "2,TASK,Задача 1,NEW,Описание 1,,2024-12-01T10:20,PT15M\n");
+        assertEquals(linesList.get(2), "3,EPIC,Эпик 1,NEW,Описание эпика 1,,2024-12-02T10:20,PT15M\n");
+        assertEquals(linesList.get(3), "4,SUBTASK,Подзадача 1 Эпика 1,NEW,Описание подзадачи 1 Эпика 1,3,2024-12-02T10:20,PT15M\n");
     }
 
     @DisplayName("Очистка задач и проверка пустоты хранилища")
@@ -78,7 +79,7 @@ public class FileBackedTaskManagerTests {
                 linesList.add(line + "\n");
             }
 
-        assertEquals(linesList.getFirst(), "id,type,name,status,description,epic,\n");
+        assertEquals(linesList.getFirst(), "id,type,name,status,description,epic,startTime,duration\n");
         assertEquals(1, linesList.size());
     }
 

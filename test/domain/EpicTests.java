@@ -2,6 +2,7 @@ package domain;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.aksndr.domain.Epic;
 import ru.aksndr.service.ITaskManager;
@@ -17,7 +18,7 @@ class EpicTests {
         taskManager = Managers.getDefaultTaskManager();
     }
 
-    // проверить, что объект Epic нельзя добавить в самого себя в виде подзадачи;
+    @DisplayName("Проверить, что объект Epic нельзя добавить в самого себя в виде подзадачи")
     @Test
     public void epicCouldNotBeSelfSubTask() {
 
@@ -26,4 +27,5 @@ class EpicTests {
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> taskManager.addSubTaskToEpic(epic, epic), "Эпик не может быть подзадачей");
     }
+
 }

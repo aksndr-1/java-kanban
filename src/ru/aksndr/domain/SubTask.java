@@ -3,6 +3,9 @@ package ru.aksndr.domain;
 import ru.aksndr.enums.TaskStatus;
 import ru.aksndr.enums.WorkItemType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class SubTask extends Task {
@@ -19,8 +22,18 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
+    public SubTask(int id, String title, String description, TaskStatus taskStatus, int epicId, LocalDateTime startTime, Duration duration) {
+        super(id, title, description, taskStatus, startTime, duration);
+        this.epicId = epicId;
+    }
+
     public SubTask(String title, String description, int epicId) {
         super(title, description);
+        this.epicId = epicId;
+    }
+
+    public SubTask(String title, String description, int epicId, LocalDateTime startTime, Duration duration) {
+        super(title, description, startTime, duration);
         this.epicId = epicId;
     }
 
@@ -40,6 +53,8 @@ public class SubTask extends Task {
                 ", description = '" + getDescription() + '\'' +
                 ", status = " + getStatus() +
                 ", parentId = " + getEpicId() +
+                ", startTime  = " + startTime.format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy")) + '\'' +
+                ", duration = " + duration +
                 '}';
     }
 
