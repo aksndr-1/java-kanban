@@ -5,7 +5,7 @@ import ru.aksndr.domain.Epic;
 import ru.aksndr.domain.SubTask;
 import ru.aksndr.domain.Task;
 import ru.aksndr.enums.TaskStatus;
-import ru.aksndr.service.impl.InMemoryTaskManager;
+import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.util.Managers;
 
 import java.time.Duration;
@@ -51,7 +51,7 @@ public class InMemoryTaskManagerTests extends TaskManagerTest{
 
     @DisplayName("Проверка невозможности создания пересекающихся задач")
     @Test
-    void tasksIntersectionTests() {
+    void tasksIntersectionTests() throws TasksIntersectsException {
         task1.setStartTime(LocalDateTime.of(2024, 12, 1, 12, 10));
         task1.setDuration(Duration.ofMinutes(10));
 
@@ -61,7 +61,7 @@ public class InMemoryTaskManagerTests extends TaskManagerTest{
 
     @DisplayName("Проверка методов управления задачами")
     @Test
-    void manageSubTaskTests() {
+    void manageSubTaskTests() throws TasksIntersectsException {
         task1.setStartTime(LocalDateTime.of(2024, 12, 1, 12, 10));
         task1.setDuration(Duration.ofMinutes(10));
         task1.setTitle("Задача 1 - updated");
@@ -92,7 +92,7 @@ public class InMemoryTaskManagerTests extends TaskManagerTest{
 
     @DisplayName("тесты управления свойствами эпиков")
     @Test
-    void manageEpicsTests() {
+    void manageEpicsTests() throws TasksIntersectsException {
         assertEquals(TaskStatus.NEW, epic1.getStatus(), "Новый эпик должен быть в статусе NEW");
         assertEquals(TaskStatus.NEW, epic1.getStatus(), "Эпик с новыми подзадачами должен быть в статусе NEW");
 

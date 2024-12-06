@@ -3,6 +3,7 @@ package ru.aksndr.service;
 import ru.aksndr.domain.Epic;
 import ru.aksndr.domain.SubTask;
 import ru.aksndr.domain.Task;
+import ru.aksndr.exceptions.TasksIntersectsException;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +16,7 @@ public interface ITaskManager {
      * Проверяет задачу на пересечение, добавляет в список задач с новым идентификатором и добавляет в список приоритетных задач.
      * @param task Задача, которую нужно сохранить.
      */
-    Task createTask(Task task);
+    Task createTask(Task task) throws TasksIntersectsException;
 
     /**
      * Возвращает задачу по ее идентификатору.
@@ -32,7 +33,7 @@ public interface ITaskManager {
      *
      * @param task Обновленная информация о задаче.
      */
-    Task updateTask(Task task);
+    Task updateTask(Task task) throws TasksIntersectsException;
 
     /**
      * Удаляет задачу по ее идентификатору.
@@ -62,7 +63,7 @@ public interface ITaskManager {
      *
      * @param subtask Подзадача для сохранения.
      */
-    SubTask createSubTask(SubTask subtask);
+    SubTask createSubTask(SubTask subtask) throws TasksIntersectsException;
 
     /**
      * Возвращает подзадачу по ее идентификатору.
@@ -82,7 +83,7 @@ public interface ITaskManager {
      *
      * @param subtask Обновленная информация о подзадаче.
      */
-    SubTask updateSubTask(SubTask subtask);
+    SubTask updateSubTask(SubTask subtask) throws TasksIntersectsException;
 
     /**
      * Удаляет подзадачу по ее идентификатору.

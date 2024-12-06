@@ -2,6 +2,7 @@ package ru.aksndr.service.impl;
 
 import ru.aksndr.domain.*;
 import ru.aksndr.enums.TaskStatus;
+import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.service.*;
 import ru.aksndr.util.Managers;
 
@@ -16,7 +17,7 @@ public class InMemoryTaskManager implements ITaskManager {
     protected final Map<Integer, Epic> epics = new HashMap<>();
     protected final Map<Integer, SubTask> subTasks = new HashMap<>();
     protected final IHistoryManager historyManager = Managers.getDefaultHistoryManager();
-    protected final TreeSet<Task> prioritizedTasks;
+    protected final Set<Task> prioritizedTasks;
     protected int counter = 0;
 
     public InMemoryTaskManager() {
@@ -30,9 +31,9 @@ public class InMemoryTaskManager implements ITaskManager {
 
     // Операции с задачами
     @Override
-    public Task createTask(Task task) {
+    public Task createTask(Task task) throws TasksIntersectsException {
         if (isIntersected(task)) {
-            return null;
+            throw new TasksIntersectsException("Task intersect by start and end time with another task ");
         }
         task.setId(getNextId());
         tasks.put(task.getId(), task);
@@ -48,9 +49,9 @@ public class InMemoryTaskManager implements ITaskManager {
     }
 
     @Override
-    public Task updateTask(Task task) {
+    public Task updateTask(Task task) throws TasksIntersectsException {
         if (isIntersected(task)) {
-            return null;
+            throw new TasksIntersectsException("Task intersect by start and end time with another task ");
         }
         tasks.put(task.getId(), task);
         rePrioritizeTasks(task);
@@ -82,9 +83,9 @@ public class InMemoryTaskManager implements ITaskManager {
 
     // Операции с подзадачами
     @Override
-    public SubTask createSubTask(SubTask subtask) {
+    public SubTask createSubTask(SubTask subtask) throws TasksIntersectsException {
         if (isIntersected(subtask)) {
-            return null;
+            throw new TasksIntersectsException("Task intersect by start and end time with another task ");
         }
         subtask.setId(getNextId());
         subTasks.put(subtask.getId(), subtask);
@@ -104,9 +105,9 @@ public class InMemoryTaskManager implements ITaskManager {
     }
 
     @Override
-    public SubTask updateSubTask(SubTask subTask) {
+    public SubTask updateSubTask(SubTask subTask) throws TasksIntersectsException {
         if (isIntersected(subTask)) {
-            return null;
+            throw new TasksIntersectsException("Task intersect by start and end time with another task ");
         }
         // Удаляем подзадачу из старого эпика, если она была перемещена в другой эпик
         SubTask oldVersionSubTask = subTasks.get(subTask.getId());

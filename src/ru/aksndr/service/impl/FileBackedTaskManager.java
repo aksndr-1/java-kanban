@@ -7,6 +7,7 @@ import ru.aksndr.enums.TaskStatus;
 import ru.aksndr.enums.WorkItemType;
 import ru.aksndr.exceptions.BackupFileException;
 import ru.aksndr.exceptions.CastWorkItemTypeException;
+import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.service.ITaskManager;
 
 import java.io.*;
@@ -31,14 +32,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
 
     // Операции с задачами
     @Override
-    public Task createTask(Task task) {
+    public Task createTask(Task task) throws TasksIntersectsException {
         super.createTask(task);
         save();
         return task;
     }
 
     @Override
-    public Task updateTask(Task task) {
+    public Task updateTask(Task task) throws TasksIntersectsException {
         super.updateTask(task);
         save();
         return task;
@@ -58,14 +59,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
 
     // Операции с подзадачами
     @Override
-    public SubTask createSubTask(SubTask subTask) {
+    public SubTask createSubTask(SubTask subTask) throws TasksIntersectsException {
         super.createSubTask(subTask);
         save();
         return subTask;
     }
 
     @Override
-    public SubTask updateSubTask(SubTask subTask) {
+    public SubTask updateSubTask(SubTask subTask) throws TasksIntersectsException {
         super.updateSubTask(subTask);
         save();
         return subTask;
@@ -156,7 +157,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
                 } else if (task.getItemType().equals(WorkItemType.EPIC)) {
                     Epic epic = (Epic) task;
                     epics.put(epic.getId(), epic);
-                    prioritizedTasks.add(epic);
 
                 } else if (task.getItemType().equals(WorkItemType.SUBTASK)) {
                     SubTask subTask = (SubTask) task;
