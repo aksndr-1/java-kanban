@@ -1,12 +1,13 @@
 
 import ru.aksndr.domain.*;
 import ru.aksndr.enums.TaskStatus;
+import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.service.ITaskManager;
 import ru.aksndr.util.Managers;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TasksIntersectsException {
         ITaskManager taskManager = Managers.getDefaultTaskManager();
 
         Task task1 = taskManager.createTask(new Task("Задача 1", "Описание 1"));
