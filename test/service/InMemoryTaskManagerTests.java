@@ -51,12 +51,13 @@ public class InMemoryTaskManagerTests extends TaskManagerTest{
 
     @DisplayName("Проверка невозможности создания пересекающихся задач")
     @Test
-    void tasksIntersectionTests() throws TasksIntersectsException {
+    void tasksIntersectionTests() {
         task1.setStartTime(LocalDateTime.of(2024, 12, 1, 12, 10));
         task1.setDuration(Duration.ofMinutes(10));
 
         Task task2 = new Task("Задача 2", "Описание 2", LocalDateTime.of(2024, 12, 1, 12, 0), Duration.ofMinutes(15));
-        assertNull(taskManager.createTask(task2), "Пересекающиеся по времени задачи не могут быть созданы");
+        Assertions.assertThrows(TasksIntersectsException.class,
+                () -> taskManager.createTask(task2), "Пересекающиеся по времени задачи не могут быть созданы");
     }
 
     @DisplayName("Проверка методов управления задачами")

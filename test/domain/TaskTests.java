@@ -3,6 +3,7 @@ package domain;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.aksndr.domain.*;
+import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.service.ITaskManager;
 import ru.aksndr.util.Managers;
 
@@ -19,7 +20,7 @@ public class TaskTests {
 
     // проверка, что экземпляры класса Task равны друг другу, если равен их id
     @Test
-    public void tasksShouldBeEqualIfIdsEqual() {
+    public void tasksShouldBeEqualIfIdsEqual() throws TasksIntersectsException {
         Task task1 = taskManager.createTask(new Task("Задача 1", "Описание 1"));
         Task task2 = taskManager.createTask(new Task("Задача 2", "Описание 2"));
 

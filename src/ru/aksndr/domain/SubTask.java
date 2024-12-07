@@ -5,7 +5,6 @@ import ru.aksndr.enums.WorkItemType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class SubTask extends Task {
@@ -53,7 +52,7 @@ public class SubTask extends Task {
                 ", description = '" + getDescription() + '\'' +
                 ", status = " + getStatus() +
                 ", parentId = " + getEpicId() +
-                ", startTime  = " + startTime.format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy")) + '\'' +
+                ", startTime  = " + startTime + '\'' +
                 ", duration = " + duration +
                 '}';
     }
