@@ -3,6 +3,8 @@ package ru.aksndr.domain;
 import ru.aksndr.enums.TaskStatus;
 import ru.aksndr.enums.WorkItemType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -11,6 +13,8 @@ public class Task {
     protected String title;
     protected String description;
     protected TaskStatus status;
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
     public WorkItemType getItemType() {
         return WorkItemType.TASK;
@@ -21,12 +25,33 @@ public class Task {
         this.title = title;
         this.description = description;
         this.status = status;
+        this.startTime = null;
+        this.duration = null;
+    }
+
+    public Task(int id, String title, String description, TaskStatus status, LocalDateTime startTime, Duration duration) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
         this.status = TaskStatus.NEW;
+        this.startTime = null;
+        this.duration = null;
+    }
+
+    public Task(String title, String description, LocalDateTime startTime, Duration duration) {
+        this.title = title;
+        this.description = description;
+        this.status = TaskStatus.NEW;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public String getTitle() {
@@ -61,6 +86,26 @@ public class Task {
         this.status = status;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = Objects.requireNonNullElse(duration, Duration.ZERO);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime == null ? null : startTime.plus(duration);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -81,6 +126,8 @@ public class Task {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", startTime  = " + startTime + '\'' +
+                ", duration = " + duration +
                 '}';
     }
 

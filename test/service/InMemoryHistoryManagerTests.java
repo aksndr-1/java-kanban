@@ -3,6 +3,7 @@ package service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.aksndr.domain.Task;
+import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.service.ITaskManager;
 import ru.aksndr.util.Managers;
 
@@ -22,7 +23,7 @@ public class InMemoryHistoryManagerTests {
 
     // проверяем, что задача добавляется в историю при её получении из менеджера задач
     @Test
-    void addToHistoryTest() {
+    void addToHistoryTest() throws TasksIntersectsException {
         Task task = taskManager.createTask(new Task("Задача 1", "Описание 1"));
         taskManager.getTask(task.getId());
 
@@ -32,7 +33,7 @@ public class InMemoryHistoryManagerTests {
 
     // проверяем, что история заполняется согласно порядку получения задач
     @Test
-    void checkHistoryRelevance() {
+    void checkHistoryRelevance() throws TasksIntersectsException {
         Task task = taskManager.createTask(new Task("Задача 1", "Описание 1"));
         taskManager.getTask(task.getId());
 
@@ -45,7 +46,7 @@ public class InMemoryHistoryManagerTests {
 
     // проверяем, что задача при удалении из менеджера задач удаляется из истории
     @Test
-    void checkHistoryRelevanceAfterDelete() {
+    void checkHistoryRelevanceAfterDelete() throws TasksIntersectsException {
         Task task = taskManager.createTask(new Task("Задача 1", "Описание 1"));
         taskManager.getTask(task.getId());
         List<Task> history = taskManager.getHistory();
@@ -59,7 +60,7 @@ public class InMemoryHistoryManagerTests {
 
     // проверяем, что задача перемещается в конец истории при её повторном получении из менеджера задач
     @Test
-    void checkHistoryRelevanceAfterRepeat() {
+    void checkHistoryRelevanceAfterRepeat() throws TasksIntersectsException {
         Task task = taskManager.createTask(new Task("Задача 1", "Описание 1"));
         taskManager.getTask(task.getId());
 

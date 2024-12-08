@@ -7,14 +7,17 @@ import ru.aksndr.enums.TaskStatus;
 import ru.aksndr.enums.WorkItemType;
 import ru.aksndr.exceptions.BackupFileException;
 import ru.aksndr.exceptions.CastWorkItemTypeException;
+import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.service.ITaskManager;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskManager {
 
-    public static final String HEADER = "id,type,name,status,description,epic,\n";
+    public static final String HEADER = "id,type,name,status,description,epic,startTime,duration\n";
     private final File file;
 
     public FileBackedTaskManager(File file) {
@@ -29,16 +32,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
 
     // Операции с задачами
     @Override
-    public Task createTask(Task task) {
+    public Task createTask(Task task) throws TasksIntersectsException {
         super.createTask(task);
         save();
         return task;
     }
 
     @Override
-    public void updateTask(Task task) {
+    public Task updateTask(Task task) throws TasksIntersectsException {
         super.updateTask(task);
         save();
+        return task;
     }
 
     @Override
@@ -55,16 +59,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
 
     // Операции с подзадачами
     @Override
-    public SubTask createSubTask(SubTask subTask) {
+    public SubTask createSubTask(SubTask subTask) throws TasksIntersectsException {
         super.createSubTask(subTask);
         save();
         return subTask;
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
+    public SubTask updateSubTask(SubTask subTask) throws TasksIntersectsException {
         super.updateSubTask(subTask);
         save();
+        return subTask;
     }
 
     @Override
@@ -147,6 +152,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
 
                 if (task.getItemType().equals(WorkItemType.TASK)) {
                     tasks.put(task.getId(), task);
+                    prioritizedTasks.add(task);
 
                 } else if (task.getItemType().equals(WorkItemType.EPIC)) {
                     Epic epic = (Epic) task;
@@ -155,6 +161,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
                 } else if (task.getItemType().equals(WorkItemType.SUBTASK)) {
                     SubTask subTask = (SubTask) task;
                     subTasks.put(subTask.getId(), subTask);
+                    prioritizedTasks.add(subTask);
 
                     Epic epic = epics.get(subTask.getEpicId());
                     epic.addSubtask(subTask);
@@ -172,25 +179,33 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
         if (task.getItemType().equals(WorkItemType.SUBTASK)) {
             epicId = String.valueOf(((SubTask) task).getEpicId());
         }
-        return task.getId() + "," + task.getItemType() + "," + task.getTitle() + "," + task.getStatus() + "," + task.getDescription() + "," + epicId;
+        return task.getId() + ","
+                + task.getItemType() + ","
+                + task.getTitle() + ","
+                + task.getStatus() + ","
+                + task.getDescription() + ","
+                + epicId + ","
+                + (task.getStartTime() == null ? "" : task.getStartTime()) + ","
+                + (task.getDuration() == null ? "" : task.getDuration());
     }
 
     private static Task stringToWorkItem(String value) throws CastWorkItemTypeException {
-        String[] split = value.split(",");
+        String[] split = value.split(",", -1);
         int id = Integer.parseInt(split[0]);
         WorkItemType taskType = WorkItemType.valueOf(split[1]);
         String title = split[2];
         TaskStatus status = TaskStatus.valueOf(split[3]);
         String description = split[4];
+        LocalDateTime startTime = split[6].isBlank() ? null : LocalDateTime.parse(split[6]);
+        Duration duration = split[7].isBlank() ? null : Duration.parse(split[7]);
 
         return switch (taskType) {
-            case TASK -> new Task(id, title, description, status);
+            case TASK -> new Task(id, title, description, status, startTime, duration);
             case SUBTASK -> {
                 int epicId = Integer.parseInt(split[5]);
-                yield new SubTask(id, title, description, status, epicId);
+                yield new SubTask(id, title, description, status, epicId, startTime, duration);
             }
-            case EPIC -> new Epic(id, title, description, status);
-            default -> throw new CastWorkItemTypeException("Ошибка загрузки из файла бекап");
+            case EPIC -> new Epic(id, title, description, status, startTime, duration);
         };
     }
 

@@ -3,8 +3,9 @@ package ru.aksndr.domain;
 import ru.aksndr.enums.TaskStatus;
 import ru.aksndr.enums.WorkItemType;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class Epic extends Task {
 
@@ -13,17 +14,32 @@ public class Epic extends Task {
         return WorkItemType.EPIC;
     }
 
-    private final ArrayList<SubTask> subTasks = new ArrayList<>();
+    private final List<SubTask> subTasks = new ArrayList<>();
+    private LocalDateTime endTime;
 
     public Epic(String title, String description) {
         super(title, description);
+        this.endTime = null;
     }
 
     public Epic(int id, String title, String description, TaskStatus taskStatus) {
         super(id, title, description, taskStatus);
     }
 
-    public ArrayList<SubTask> getSubTasks() {
+    public Epic(int id, String title, String description, TaskStatus taskStatus, LocalDateTime startTime, Duration duration) {
+        super(id, title, description, taskStatus, startTime, duration);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public List<SubTask> getSubTasks() {
         return subTasks;
     }
 
@@ -35,14 +51,17 @@ public class Epic extends Task {
         } else {
             subTasks.add(subtask);
         }
+        updateEpic();
     }
 
     public void deleteSubtask(SubTask subTask) {
         subTasks.remove(subTask);
+        updateEpic();
     }
 
     public void deleteAllSubtasks() {
         subTasks.clear();
+        updateEpic();
     }
 
     @Override
@@ -54,6 +73,16 @@ public class Epic extends Task {
                 ", status = " + getStatus() +
                 ", subtasks count = " + subTasks.size() +
                 '}';
+    }
+
+    /**
+     * Обновление составных свойств Эпика по подзадачам
+     */
+    public void updateEpic() {
+        updateStatus();
+        updateStartTime();
+        updateDuration();
+        updateEndTime();
     }
 
     /**
@@ -82,6 +111,40 @@ public class Epic extends Task {
         } else {
             setStatus(TaskStatus.IN_PROGRESS);
         }
+    }
+
+    /**
+     * Обновление длительности эпика
+     */
+    private void updateDuration() {
+        Duration duration = Duration.ZERO;
+        for (SubTask subtask : subTasks) {
+            if (subtask.getDuration() != null && !subtask.getDuration().isZero()) {
+                Duration subtask1Duration = subtask.getDuration();
+                duration = duration.plus(subtask1Duration);
+            }
+        }
+        setDuration(duration);
+    }
+
+    /**
+     * Обновление времени начала эпика
+     */
+    private void updateStartTime() {
+        Optional<SubTask> epicStartTime = subTasks.stream()
+                .filter(subtask -> subtask.getStartTime() != null)
+                .min(Comparator.comparing(Task::getStartTime));
+        epicStartTime.ifPresent(subtask -> setStartTime(subtask.getStartTime()));
+    }
+
+    /**
+     * Обновление времени окончания эпика
+     */
+    private void updateEndTime() {
+        Optional<SubTask> epicEndTime = subTasks.stream()
+                .filter(subtask -> subtask.getEndTime() != null)
+                .max(Comparator.comparing(Task::getEndTime));
+        epicEndTime.ifPresent(subtask -> setEndTime(subtask.getEndTime()));
     }
 
     @Override
