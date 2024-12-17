@@ -11,7 +11,7 @@ import java.time.Duration;
 public class DurationAdapter extends TypeAdapter<Duration> {
     @Override
     public void write(JsonWriter jsonWriter, Duration duration) throws IOException {
-        if (duration.isZero()) {
+        if (duration == null || duration.isZero()) {
             jsonWriter.nullValue();
         } else {
             int durationOfMin = (int) duration.toMinutes();

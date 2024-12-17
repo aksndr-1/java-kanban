@@ -25,16 +25,8 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
         Endpoint endpoint = getEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod());
 
         switch (endpoint) {
-            case GET_EPICS: {
-                handleGetEpics(exchange);
-                break;
-            }
             case GET_EPIC: {
-                handleGetepicID(exchange);
-                break;
-            }
-            case GET_EPIC_SUBTASKS: {
-                handleEpicSubtasks(exchange);
+                handleGetEpic(exchange);
                 break;
             }
             case CREATE_EPIC: {
@@ -43,6 +35,14 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
             }
             case DELETE_EPIC: {
                 handleDeleteEpic(exchange);
+                break;
+            }
+            case GET_EPICS: {
+                handleGetEpics(exchange);
+                break;
+            }
+            case GET_EPIC_SUBTASKS: {
+                handleGetEpicSubTasks(exchange);
                 break;
             }
             case DELETE_EPICS: {
@@ -64,30 +64,22 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
 
     private void handlePostEpic(HttpExchange exchange) throws IOException {
         String body = readRequestFromBody(exchange);
-        if (body.isEmpty()) {
-            return;
-        }
+        if (body.isEmpty()) return;
+
         try {
             JsonElement jsonElement = JsonParser.parseString(body);
             if (!jsonElement.isJsonObject()) {
                 sendBadRequestMessage(exchange);
                 return;
             }
-            Epic epicOfELement = gson.fromJson(jsonElement, Epic.class);
-            Epic epic = new Epic(epicOfELement.getTitle(), epicOfELement.getDescription());
-            epic.setDuration(epicOfELement.getDuration());
-            if (epicOfELement.getId() > 0) {
-                epic.setId(epicOfELement.getId());
-                Epic updEpic = taskManager.updateEpic(epic);
-                String json = gson.toJson(updEpic);
-                sendMessage(exchange, json);
-            } else if (epicOfELement.getId() == 0) {
-                Epic newEpic = taskManager.createEpic(epic);
-                String json = gson.toJson(newEpic);
-                sendMessage(exchange, json);
+            Epic epic = gson.fromJson(jsonElement, Epic.class);
+            if (epic.getId() > 0) {
+                epic = taskManager.updateEpic(epic);
             } else {
-                sendNotFoundMessage(exchange);
+                epic = taskManager.createEpic(epic);
             }
+            String json = gson.toJson(epic);
+            sendMessage(exchange, json);
         } catch (TaskNotFoundException e) {
             sendNotFoundMessage(exchange);
         } catch (Exception e) {
@@ -95,9 +87,9 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    private void handleEpicSubtasks(HttpExchange exchange) throws IOException {
+    private void handleGetEpicSubTasks(HttpExchange exchange) throws IOException {
         try {
-            int id = getId(exchange);
+            int id = getWorkItemId(exchange);
             if (taskManager.getEpic(id) == null) {
                 sendNotFoundMessage(exchange);
                 return;
@@ -110,7 +102,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    private void handleGetepicID(HttpExchange exchange) throws IOException {
+    private void handleGetEpic(HttpExchange exchange) throws IOException {
         getTaskById(exchange, WorkItemType.EPIC);
     }
 

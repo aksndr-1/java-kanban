@@ -128,7 +128,7 @@ public class BaseHttpHandler {
 
     protected void getTaskById(HttpExchange exchange, WorkItemType taskType) throws IOException {
         try {
-            int id = getId(exchange);
+            int id = getWorkItemId(exchange);
             String json = switch (taskType) {
                 case EPIC -> gson.toJson(taskManager.getEpic(id));
                 case SUBTASK -> gson.toJson(taskManager.getSubTask(id));
@@ -144,7 +144,7 @@ public class BaseHttpHandler {
 
     protected void removeTask(HttpExchange exchange, WorkItemType taskType) throws IOException {
         try {
-            int id = getId(exchange);
+            int id = getWorkItemId(exchange);
             switch (taskType) {
                 case EPIC -> taskManager.deleteEpic(id);
                 case TASK -> taskManager.deleteTask(id);
@@ -177,7 +177,7 @@ public class BaseHttpHandler {
         exchange.close();
     }
 
-    protected int getId(HttpExchange exchange) {
+    protected int getWorkItemId(HttpExchange exchange) {
         String[] pathParts = exchange.getRequestURI().getPath().split("/");
         try {
             return Integer.parseInt(pathParts[2]);

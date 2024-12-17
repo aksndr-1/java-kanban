@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         HttpTaskServer server = new HttpTaskServer(Managers.getDefaultTaskManager());
         try {
-            server.serverStart();
+            server.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

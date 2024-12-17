@@ -5,6 +5,7 @@ import ru.aksndr.domain.Epic;
 import ru.aksndr.domain.SubTask;
 import ru.aksndr.domain.Task;
 import ru.aksndr.enums.TaskStatus;
+import ru.aksndr.exceptions.TaskNotFoundException;
 import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.util.Managers;
 
@@ -121,8 +122,11 @@ public class InMemoryTaskManagerTests extends TaskManagerTest{
     void deleteEpicTest() {
         taskManager.deleteEpic(epic1.getId());
         int subTaskId= subTask1.getId();
-        assertNull(taskManager.getEpic(epic1.getId()), "Удаление эпика должно удалить её из менеджера");
-        assertNull(taskManager.getSubTask(subTaskId), "Удаление эпика должно удалить его подзадачу");
+        Assertions.assertThrows(TaskNotFoundException.class,
+                () -> taskManager.getEpic(epic1.getId()), "Удаление эпика должно удалить её из менеджера");
+
+        Assertions.assertThrows(TaskNotFoundException.class,
+                () -> taskManager.getSubTask(subTaskId), "Удаление эпика должно удалить его подзадачу");
     }
 
     @DisplayName("Проверка прироритетности задач")

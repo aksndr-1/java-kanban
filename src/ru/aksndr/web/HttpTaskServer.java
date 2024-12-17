@@ -16,7 +16,7 @@ public class HttpTaskServer {
         manager = taskManager;
     }
 
-    public void serverStart() throws IOException {
+    public void start() throws IOException {
 
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/tasks", new TaskHandler(manager));
@@ -28,7 +28,7 @@ public class HttpTaskServer {
         System.out.println("HTTP сервер запущен на " + PORT + " порту.");
     }
 
-    public void stopServer() {
+    public void stop() {
         server.stop(0);
     }
 

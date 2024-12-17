@@ -90,7 +90,7 @@ public class InMemoryTaskManager implements ITaskManager {
             throw new TasksIntersectsException("Task intersect by start and end time with another task ");
         subtask.setId(getNextId());
         subTasks.put(subtask.getId(), subtask);
-        if (!subTasks.containsKey(subtask.getEpicId()))
+        if (!epics.containsKey(subtask.getEpicId()))
             throw new TaskNotFoundException(WorkItemType.EPIC, subtask.getEpicId());
         Epic epic = epics.get(subtask.getEpicId());
         if (epic != null) {
@@ -239,13 +239,13 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public void deleteAllEpics() {
-        epics.values().forEach(epic -> {
-            historyManager.remove(epic.getId());
-            epic.getSubTasks().forEach(subtask -> {
+        for (Epic epic : epics.values()) {
+            for (SubTask subtask : epic.getSubTasks()) {
                 historyManager.remove(subtask.getId());
                 epic.deleteSubtask(subtask);
-            });
-        });
+            }
+            historyManager.remove(epic.getId());
+        }
         epics.clear();
     }
 
