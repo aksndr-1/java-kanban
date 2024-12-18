@@ -57,7 +57,7 @@ public class InMemoryTaskManagerTests extends TaskManagerTest{
         task1.setDuration(Duration.ofMinutes(10));
 
         Task task2 = new Task("Задача 2", "Описание 2", LocalDateTime.of(2024, 12, 1, 12, 0), Duration.ofMinutes(15));
-        Assertions.assertThrows(TasksIntersectsException.class,
+        assertThrows(TasksIntersectsException.class,
                 () -> taskManager.createTask(task2), "Пересекающиеся по времени задачи не могут быть созданы");
     }
 
@@ -122,10 +122,10 @@ public class InMemoryTaskManagerTests extends TaskManagerTest{
     void deleteEpicTest() {
         taskManager.deleteEpic(epic1.getId());
         int subTaskId= subTask1.getId();
-        Assertions.assertThrows(TaskNotFoundException.class,
+        assertThrows(TaskNotFoundException.class,
                 () -> taskManager.getEpic(epic1.getId()), "Удаление эпика должно удалить её из менеджера");
 
-        Assertions.assertThrows(TaskNotFoundException.class,
+        assertThrows(TaskNotFoundException.class,
                 () -> taskManager.getSubTask(subTaskId), "Удаление эпика должно удалить его подзадачу");
     }
 
