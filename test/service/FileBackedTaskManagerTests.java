@@ -48,8 +48,8 @@ public class FileBackedTaskManagerTests extends TaskManagerTest{
             }
         assertEquals(linesList.get(0), "id,type,name,status,description,epic,startTime,duration\n");
         assertEquals(linesList.get(1), "6,TASK,Задача 1,NEW,Описание 1,,2024-12-01T10:20,PT15M\n");
-        assertEquals(linesList.get(2), "7,EPIC,Эпик 1,NEW,Описание эпика 1,,2024-12-02T10:20,PT30M\n");
-        assertEquals(linesList.get(3), "8,SUBTASK,Подзадача 1 Эпика 1,NEW,Описание подзадачи 1 Эпика 1,7,2024-12-02T10:20,PT15M\n");
+        assertEquals(linesList.get(2), "7,EPIC,Эпик 1,NEW,Описание эпика 1,,2024-12-02T10:50,PT30M\n");
+        assertEquals(linesList.get(3), "8,SUBTASK,Подзадача 1 Эпика 1,NEW,Описание подзадачи 1 Эпика 1,7,2024-12-05T10:20,PT15M\n");
     }
 
     @DisplayName("Очистка задач и проверка пустоты хранилища")

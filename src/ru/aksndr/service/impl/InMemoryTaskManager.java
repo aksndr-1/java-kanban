@@ -2,6 +2,8 @@ package ru.aksndr.service.impl;
 
 import ru.aksndr.domain.*;
 import ru.aksndr.enums.TaskStatus;
+import ru.aksndr.enums.WorkItemType;
+import ru.aksndr.exceptions.TaskNotFoundException;
 import ru.aksndr.exceptions.TasksIntersectsException;
 import ru.aksndr.service.*;
 import ru.aksndr.util.Managers;
@@ -32,9 +34,8 @@ public class InMemoryTaskManager implements ITaskManager {
     // Операции с задачами
     @Override
     public Task createTask(Task task) throws TasksIntersectsException {
-        if (isIntersected(task)) {
+        if (isIntersected(task))
             throw new TasksIntersectsException("Task intersect by start and end time with another task ");
-        }
         task.setId(getNextId());
         tasks.put(task.getId(), task);
         rePrioritizeTasks(task);
@@ -43,6 +44,8 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public Task getTask(int id) {
+        if (!tasks.containsKey(id))
+            throw new TaskNotFoundException(WorkItemType.TASK, id);
         Task task = tasks.get(id);
         historyManager.add(task);
         return task;
@@ -50,9 +53,8 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public Task updateTask(Task task) throws TasksIntersectsException {
-        if (isIntersected(task)) {
+        if (isIntersected(task))
             throw new TasksIntersectsException("Task intersect by start and end time with another task ");
-        }
         tasks.put(task.getId(), task);
         rePrioritizeTasks(task);
         return task;
@@ -74,21 +76,20 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public void deleteAllTasks() {
-        tasks.values().forEach(task -> {
-            historyManager.remove(task.getId());
-            prioritizedTasks.remove(task);
-        });
+        tasks.values().forEach(task -> historyManager.remove(task.getId()));
+        prioritizedTasks.removeIf(task -> task.getItemType() == WorkItemType.TASK);
         tasks.clear();
     }
 
     // Операции с подзадачами
     @Override
     public SubTask createSubTask(SubTask subtask) throws TasksIntersectsException {
-        if (isIntersected(subtask)) {
+        if (isIntersected(subtask))
             throw new TasksIntersectsException("Task intersect by start and end time with another task ");
-        }
         subtask.setId(getNextId());
         subTasks.put(subtask.getId(), subtask);
+        if (!epics.containsKey(subtask.getEpicId()))
+            throw new TaskNotFoundException(WorkItemType.EPIC, subtask.getEpicId());
         Epic epic = epics.get(subtask.getEpicId());
         if (epic != null) {
             epic.addSubtask(subtask);
@@ -99,6 +100,8 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public SubTask getSubTask(int id) {
+        if (!subTasks.containsKey(id))
+            throw new TaskNotFoundException(WorkItemType.SUBTASK, id);
         SubTask subTask = subTasks.get(id);
         historyManager.add(subTask);
         return subTask;
@@ -106,10 +109,12 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public SubTask updateSubTask(SubTask subTask) throws TasksIntersectsException {
-        if (isIntersected(subTask)) {
+        if (isIntersected(subTask))
             throw new TasksIntersectsException("Task intersect by start and end time with another task ");
-        }
+
         // Удаляем подзадачу из старого эпика, если она была перемещена в другой эпик
+        if (!subTasks.containsKey(subTask.getId()))
+            throw new TaskNotFoundException(WorkItemType.SUBTASK, subTask.getId());
         SubTask oldVersionSubTask = subTasks.get(subTask.getId());
         int oldEpicId = oldVersionSubTask.getEpicId();
         if (oldEpicId != subTask.getEpicId()) {
@@ -121,6 +126,8 @@ public class InMemoryTaskManager implements ITaskManager {
 
         // Добавляем подзадачу в новый эпик
         subTasks.put(subTask.getId(), subTask);
+        if (!epics.containsKey(subTask.getEpicId()))
+            throw new TaskNotFoundException(WorkItemType.EPIC, subTask.getEpicId());
         Epic epic = epics.get(subTask.getEpicId());
         if (epic != null) {
             epic.addSubtask(subTask);
@@ -160,13 +167,10 @@ public class InMemoryTaskManager implements ITaskManager {
     @Override
     public void deleteAllSubTasks() {
         subTasks.clear();
+        prioritizedTasks.removeIf(subtask -> subtask.getItemType() == WorkItemType.SUBTASK);
         epics.values().forEach(epic -> {
             epic.setStatus(TaskStatus.NEW);
-            epic.getSubTasks().forEach(subtask -> {
-                historyManager.remove(subtask.getId());
-                subTasks.remove(subtask.getId());
-                prioritizedTasks.remove(subtask);
-            });
+            epic.getSubTasks().forEach(subtask -> historyManager.remove(subtask.getId()));
             epic.deleteAllSubtasks();
         });
     }
@@ -181,17 +185,20 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public Epic getEpic(int id) {
+        if (!epics.containsKey(id)) throw new TaskNotFoundException(WorkItemType.EPIC, id);
         return epics.get(id);
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public Epic updateEpic(Epic epic) {
         epics.put(epic.getId(), epic);
+        return epic;
     }
 
     @Override
     public void deleteEpic(int id) {
-        if (!epics.containsKey(id)) return;
+        if (!epics.containsKey(id))
+            throw new TaskNotFoundException(WorkItemType.EPIC, id);
 
         Epic epic = epics.get(id);
         for (SubTask subtask : epic.getSubTasks()) {
@@ -205,7 +212,8 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public List<SubTask> getEpicSubtasks(int id) {
-        if (!epics.containsKey(id)) return null;
+        if (!epics.containsKey(id))
+            throw new TaskNotFoundException(WorkItemType.EPIC, id);
 
         Epic epic = epics.get(id);
         if (epic == null) {
@@ -226,13 +234,13 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public void deleteAllEpics() {
-        epics.values().forEach(epic -> {
-            historyManager.remove(epic.getId());
-            epic.getSubTasks().forEach(subtask -> {
+        for (Epic epic : epics.values()) {
+            for (SubTask subtask : epic.getSubTasks()) {
                 historyManager.remove(subtask.getId());
                 epic.deleteSubtask(subtask);
-            });
-        });
+            }
+            historyManager.remove(epic.getId());
+        }
         epics.clear();
     }
 
