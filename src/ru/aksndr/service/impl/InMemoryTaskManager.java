@@ -76,10 +76,8 @@ public class InMemoryTaskManager implements ITaskManager {
 
     @Override
     public void deleteAllTasks() {
-        tasks.values().forEach(task -> {
-            historyManager.remove(task.getId());
-            prioritizedTasks.remove(task);
-        });
+        tasks.values().forEach(task -> historyManager.remove(task.getId()));
+        prioritizedTasks.removeIf(task -> task.getItemType() == WorkItemType.TASK);
         tasks.clear();
     }
 
@@ -169,13 +167,10 @@ public class InMemoryTaskManager implements ITaskManager {
     @Override
     public void deleteAllSubTasks() {
         subTasks.clear();
+        prioritizedTasks.removeIf(subtask -> subtask.getItemType()== WorkItemType.SUBTASK);
         epics.values().forEach(epic -> {
             epic.setStatus(TaskStatus.NEW);
-            epic.getSubTasks().forEach(subtask -> {
-                historyManager.remove(subtask.getId());
-                subTasks.remove(subtask.getId());
-                prioritizedTasks.remove(subtask);
-            });
+            epic.getSubTasks().forEach(subtask -> historyManager.remove(subtask.getId()));
             epic.deleteAllSubtasks();
         });
     }

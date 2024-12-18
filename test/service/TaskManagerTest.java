@@ -23,7 +23,7 @@ public class TaskManagerTest{
     public void init() throws Exception {
         task1 = taskManager.createTask(new Task("Задача 1", "Описание 1", LocalDateTime.of(2024, 12, 1, 10, 20), Duration.ofMinutes(15)));
         epic1 = taskManager.createEpic(new Epic("Эпик 1", "Описание эпика 1"));
-        subTask1 = taskManager.createSubTask(new SubTask("Подзадача 1 Эпика 1", "Описание подзадачи 1 Эпика 1", epic1.getId(), LocalDateTime.of(2024, 12, 2, 10, 20), Duration.ofMinutes(15)));
+        subTask1 = taskManager.createSubTask(new SubTask("Подзадача 1 Эпика 1", "Описание подзадачи 1 Эпика 1", epic1.getId(), LocalDateTime.of(2024, 12, 5, 10, 20), Duration.ofMinutes(15)));
         subTask2 = taskManager.createSubTask(new SubTask("Подзадача 2 Эпика 1", "Описание подзадачи 2 Эпика 1", epic1.getId(), LocalDateTime.of(2024, 12, 2, 10, 50), Duration.ofMinutes(15)));
     }
 

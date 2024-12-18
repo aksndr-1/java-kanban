@@ -132,7 +132,7 @@ public class InMemoryTaskManagerTests extends TaskManagerTest{
     @DisplayName("Проверка прироритетности задач")
     @Test
     void priorityTaskTest() {
-        assertEquals("Подзадача 2 Эпика 1", taskManager.getPrioritizedTasks().getLast().getTitle());
+        assertEquals("Подзадача 1 Эпика 1", taskManager.getPrioritizedTasks().getLast().getTitle());
     }
 
 }
