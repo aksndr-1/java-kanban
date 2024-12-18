@@ -167,7 +167,7 @@ public class InMemoryTaskManager implements ITaskManager {
     @Override
     public void deleteAllSubTasks() {
         subTasks.clear();
-        prioritizedTasks.removeIf(subtask -> subtask.getItemType()== WorkItemType.SUBTASK);
+        prioritizedTasks.removeIf(subtask -> subtask.getItemType() == WorkItemType.SUBTASK);
         epics.values().forEach(epic -> {
             epic.setStatus(TaskStatus.NEW);
             epic.getSubTasks().forEach(subtask -> historyManager.remove(subtask.getId()));
