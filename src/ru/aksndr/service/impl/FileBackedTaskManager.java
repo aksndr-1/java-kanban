@@ -99,9 +99,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public Epic updateEpic(Epic epic) {
         super.updateEpic(epic);
         save();
+        return epic;
     }
 
     @Override
